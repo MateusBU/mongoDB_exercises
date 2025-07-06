@@ -1,0 +1,75 @@
+MongoDB Query Examples Explained
+===============================
+
+1. db.states.findOne()
+----------------------
+Returns the first document found in the 'states' collection.
+
+2. db.states.findOne({uf: "RJ"})
+-------------------------------
+Finds the first document where the 'uf' field is equal to "RJ".
+
+3. db.states.find({uf: "RJ"})
+----------------------------
+Finds all documents where the 'uf' field is "RJ".
+
+4. db.states.find({$or:[{uf: "SP"}, {uf: "AC"}]})
+------------------------------------------------
+Finds all documents where 'uf' is either "SP" OR "AC".
+
+5. db.states.find({$and:[{uf: "SP"}, {uf: "AC"}]})
+-------------------------------------------------
+Finds documents where 'uf' is both "SP" AND "AC".
+
+Note: This will return nothing because a single field ('uf') cannot have two different values at once.
+
+6. db.states.find({population:{$exists: true}})
+-----------------------------------------------
+Finds all documents where the field 'population' exists (regardless of its value).
+
+7. db.states.find().skip(3)
+---------------------------
+Skips the first 3 documents and returns the rest.
+
+Useful for pagination.
+
+8. db.states.find().skip(1).limit(2)
+------------------------------------
+Skips the first document and then limits the result to 2 documents.
+
+Useful for paging through data in chunks.
+
+9. db.states.count()
+--------------------
+Returns the total number of documents in the 'states' collection.
+
+10. db.states.find({uf: "SP"}, {name: 1, uf: 1})
+------------------------------------------------
+Finds all documents where 'uf' is "SP", but only returns the 'name' and 'uf' fields.
+
+Note: '_id' is included by default unless explicitly excluded.
+
+11. db.states.find({uf: "SP"}, {name: 1, uf: 1, _id: 0})
+--------------------------------------------------------
+Same as the previous query, but also excludes the '_id' field in the result.
+
+Output only includes:
+- name
+- uf
+
+12. db.states.find({uf: "SP"}, {"cities.name": 1, _id: 0})
+--------------------------------------------------------
+
+- Searches for all documents where the 'uf' field is equal to "SP".
+- From the matching documents, it returns only the 'name' field of each city inside the 'cities' array.
+- The '_id' field is excluded from the output.
+
+Expected output format:
+-----------------------
+{
+  cities: [
+    { name: "São Paulo" },
+    { name: "Campinas" },
+    ...
+  ]
+}
