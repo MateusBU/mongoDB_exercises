@@ -1,0 +1,52 @@
+MongoDB Basic Commands Explained
+================================
+
+1. show dbs
+-----------
+Description:
+Lists all databases currently available on the MongoDB server.
+
+Note:
+A database will only appear here after it contains some data (e.g., a collection or document).
+
+2. use mongoDb
+--------------
+Description:
+Switches the context to the 'mongoDb' database.
+
+Note:
+If the database does not exist yet, MongoDB will create it automatically when you insert data or create a collection.
+
+3. db.createCollection('states')
+-------------------------------
+Description:
+Creates a new collection named 'states' in the current database.
+
+Note:
+A collection in MongoDB is similar to a table in relational databases.
+
+4. show collections
+-------------------
+Description:
+Displays all collections within the current database.
+
+Note:
+Just like databases, collections only appear once they contain data or are explicitly created.
+
+5. db.States.drop()
+-------------------
+Description:
+Attempts to delete the 'States' collection.
+
+Important:
+MongoDB is case-sensitive. If the collection was created as 'states', then 'db.States.drop()' will NOT work.
+Use 'db.states.drop()' instead.
+
+Return Values:
+- true  → collection was deleted.
+- false → collection not found or not deleted.
+
+Additional Notes
+----------------
+- All commands are run inside the MongoDB shell (mongosh).
+- MongoDB creates databases and collections lazily (only when data is inserted).
