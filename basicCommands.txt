@@ -50,3 +50,47 @@ Additional Notes
 ----------------
 - All commands are run inside the MongoDB shell (mongosh).
 - MongoDB creates databases and collections lazily (only when data is inserted).
+
+Using _id: ObjectId() in MongoDB
+===============================
+
+What is _id: ObjectId()?
+------------------------
+- In MongoDB, ObjectId() generates a unique identifier.
+- It is the default type used for the _id field in documents.
+- You can also use it manually inside subdocuments (e.g., arrays like 'cities').
+
+When to use it:
+---------------
+- When you want each subdocument (like a city) to have a unique identifier.
+- Useful if you plan to search for or update specific items inside arrays.
+
+Example:
+--------
+db.states.insertOne({
+  name: "Rio de Janeiro",
+  uf: "RJ",
+  region: "Southeast",
+  cities: [
+    { _id: ObjectId(), name: "Rio de Janeiro" },
+    { _id: ObjectId(), name: "Niterói" },
+    { _id: ObjectId(), name: "Petrópolis" }
+  ]
+})
+
+Explanation:
+------------
+- The 'states' document includes an array of cities.
+- Each city gets a unique _id using ObjectId().
+- This allows you to reference cities individually.
+
+Query example:
+--------------
+To find a specific city by its _id:
+db.states.find({ "cities._id": ObjectId("64eac8ff12ab34...") })
+
+Note:
+-----
+- ObjectId() can only be used directly in mongosh or programming languages (Node.js, Python, etc).
+- In .json files, use:
+  "_id": { "$oid": "64eac8ff12ab34..." }
