@@ -1,0 +1,81 @@
+MongoDB Aggregation Pipeline Queries
+====================================
+
+1. Show state names and city names only
+---------------------------------------
+Query:
+db.states.aggregate([
+    { $project: { name: 1, "cities.name": 1, _id: 0 } }
+])
+
+Explanation:
+- Projects (returns) only the 'name' of the state and the 'name' field of each city inside the 'cities' array.
+- Excludes the '_id' field from the output.
+
+Example Output:
+{
+  name: "São Paulo",
+  cities: [
+    { name: "São Paulo" },
+    { name: "Campinas" }
+  ]
+}
+
+
+2. Sum population of all cities per state
+-----------------------------------------
+Query:
+db.states.aggregate([
+    { $project: { population: { $sum: "$cities.population" }, uf: 1, _id: 0 } }
+])
+
+Explanation:
+- Calculates the total population of all cities inside each state.
+- Returns:
+  - The sum as 'population'
+  - The 'uf' of the state
+  - No '_id' field
+
+Example Output:
+{
+  uf: "SP",
+  population: 22000000
+}
+
+
+3. Sum population of all cities across all states
+-------------------------------------------------
+Query:
+db.states.aggregate([
+    { $project: { population: { $sum: "$cities.population" }, uf: 1, _id: 0 } },
+    { $group: { _id: null, totalPopulation: { $sum: "$population" } } }
+])
+
+Explanation:
+- First, computes the total population per state.
+- Then, groups all results together and calculates the total of all state populations.
+
+Example Output:
+{
+  _id: null,
+  totalPopulation: 180000000
+}
+
+
+4. Same as above, but hides the _id field
+-----------------------------------------
+Query:
+db.states.aggregate([
+    { $project: { population: { $sum: "$cities.population" }, uf: 1, _id: 0 } },
+    { $group: { _id: null, totalPopulation: { $sum: "$population" } } },
+    { $project: { _id: 0, totalPopulation: 1 } }
+])
+
+Explanation:
+- Same as the previous query.
+- Final `$project` step removes the `_id` from the result, so only 'totalPopulation' is returned.
+
+Example Output:
+{
+  totalPopulation: 180000000
+}

@@ -1,0 +1,66 @@
+MongoDB Aggregation Pipeline Examples – Explained
+
+Collection: db.states
+Assumption: Each document in "states" contains an array field "cities", and each "city" has a "name" and "_id".
+
+-----------------------------------------------------
+1. Basic Match – Find states with a city named "Sorocaba"
+
+db.states.aggregate([
+    { $match: {"cities.name": "Sorocaba"} },
+])
+
+Explanation:
+- Filters the 'states' collection.
+- Returns entire state documents that contain at least one city named "Sorocaba".
+- Does not separate cities; the whole 'cities' array is preserved.
+
+-----------------------------------------------------
+2. Match + Unwind – Break cities into individual documents
+
+db.states.aggregate([
+    { $match: {"cities.name": "Sorocaba"} },
+    { $unwind: "$cities" }
+])
+
+Explanation:
+- Step 1: Filter to include only states with a city named "Sorocaba".
+- Step 2: '$unwind' deconstructs the 'cities' array so each city becomes its own document.
+- Now each output document contains only one city object (but still includes state info).
+
+-----------------------------------------------------
+3. Match + Unwind + Match Again – Isolate only "Sorocaba" cities
+
+db.states.aggregate([
+    { $match: {"cities.name": "Sorocaba"} },
+    { $unwind: "$cities" },
+    { $match: {"cities.name": "Sorocaba"} }
+])
+
+Explanation:
+- First '$match': Include states that have a city named "Sorocaba".
+- '$unwind': Break each city out into separate documents.
+- Second '$match': Filter again, but now at city-level, returning only cities named "Sorocaba".
+- Results include only "Sorocaba" city documents (one per document), still inside the state context.
+
+-----------------------------------------------------
+4. Match + Unwind + Match Again + Project – Return only city IDs
+
+db.states.aggregate([
+    { $match: {"cities.name": "Sorocaba"} },
+    { $unwind: "$cities" },
+    { $match: {"cities.name": "Sorocaba"} },
+    { $project: {_id: "$cities._id"} }
+])
+
+Explanation:
+- Same as above steps: filter states, unwind cities, filter cities named "Sorocaba".
+- '$project': Only return the _id of the matching city.
+- Output: A list of city IDs where name == "Sorocaba".
+
+-----------------------------------------------------
+
+Summary:
+- Use $match to filter documents.
+- Use $unwind to work with elements of an array as if they were top-level documents.
+- Use $project to select specific fields from the result.

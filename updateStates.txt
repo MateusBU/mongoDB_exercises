@@ -1,0 +1,67 @@
+MongoDB Update & Find Commands – Explained
+
+Collection: db.states
+
+-----------------------------------------------------
+1. Update state "SP" – Set population field
+
+db.states.updateOne(
+    { uf: "SP" },
+    { $set: { population: 741852963 } }
+)
+
+Explanation:
+- Finds the document where `uf` is "SP".
+- Sets the `population` field to 741852963.
+- If the `population` field doesn't exist, it will be created.
+- Only updates the first matching document.
+
+-----------------------------------------------------
+2. Update state "AL" – Replace 'cities' array with a new one
+
+db.states.updateOne(
+    { uf: "AL" },
+    { $set: { cities: [{ name: "Sergipe" }] } }
+)
+
+Explanation:
+- Finds the document where `uf` is "AL".
+- Replaces the entire `cities` array with a new array containing just one city: `{name: "Sergipe"}`.
+- Be careful: This **overwrites** any existing cities in that state.
+
+-----------------------------------------------------
+3. Update state "SP" – Add a new city using $push
+
+db.states.updateOne(
+    { uf: "SP" },
+    { $push: { cities: { name: "Santos", population: 456328 } } }
+)
+
+Explanation:
+- Finds the document where `uf` is "SP".
+- Adds a new city object to the `cities` array using `$push`.
+- The new city is `{ name: "Santos", population: 456328 }`.
+- Does not replace existing data – it appends to the array.
+
+-----------------------------------------------------
+4. Find all states with a 'population' field
+
+db.states.find(
+    { population: { $exists: true } },
+    { _id: 0, name: 1 }
+)
+
+Explanation:
+- Searches for documents where the `population` field **exists** (regardless of its value).
+- Returns only the `name` field.
+- Excludes the `_id` field (`_id: 0`).
+- Useful for listing states that have a population defined.
+
+-----------------------------------------------------
+
+Summary:
+- `$set`: Creates or updates a field with a specific value.
+- `$push`: Adds a value to an array field.
+- `$exists`: Checks if a field is present in a document.
+- Always double-check `$set` on arrays to avoid unwanted overwrites.
+
