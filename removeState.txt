@@ -1,0 +1,47 @@
+MongoDB Deletion Commands – Explained
+
+Collection: db.states
+
+-----------------------------------------------------
+1. Incorrect Command (Typo) – removeOne does not exist
+
+db.states.removeOne({ uf: "AC" })
+
+Explanation:
+- ❌ This command is **incorrect**.
+- MongoDB has **remove()** (deprecated) and **deleteOne()**, but **removeOne()** does not exist.
+- Correct version:
+
+    db.states.deleteOne({ uf: "AC" })
+
+- Deletes the first document where `uf` is "AC".
+
+-----------------------------------------------------
+2. Delete one document where 'population' exists
+
+db.states.deleteOne({ population: { $exists: true } })
+
+Explanation:
+- Deletes the **first document** in `states` where the field `population` exists (regardless of value).
+- If multiple documents have `population`, only one will be removed.
+
+-----------------------------------------------------
+3. Incorrect Collection Reference – Missing 'states'
+
+db.deleteOne({ population: { $lt: 20000000 } })
+
+Explanation:
+- ❌ This command is **incomplete/invalid** because it doesn't specify a collection.
+- It should be:
+
+    db.states.deleteOne({ population: { $lt: 20000000 } })
+
+- Deletes the first document in `states` where `population` is **less than 20,000,000**.
+
+-----------------------------------------------------
+
+Summary:
+- ✅ `deleteOne()` deletes **only the first** matching document.
+- ⚠️ `remove()` is deprecated; use `deleteOne()` or `deleteMany()` instead.
+- ❌ `removeOne()` does not exist.
+- Always ensure the correct collection is used (e.g., `db.states`).
